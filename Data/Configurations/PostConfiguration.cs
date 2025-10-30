@@ -36,9 +36,6 @@ public class PostConfiguration : IEntityTypeConfiguration<Post>
         builder.Property(p => p.MetaDescription)
             .HasMaxLength(160);
 
-        builder.Property(p => p.Tags)
-            .HasMaxLength(500);
-
         builder.Property(p => p.IsPublished)
             .IsRequired()
             .HasDefaultValue(false);

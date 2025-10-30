@@ -1,0 +1,33 @@
+@page
+@using dotnet_blog_bmad.Helpers
+@model dotnet_blog_bmad.Pages.RssModel
+@{
+    Layout = null;
+    var domain = "https://yourdomain.com"; // TODO: Replace with actual domain
+    var blogTitle = "我的部落格";
+    var blogDescription = "分享技術與生活的部落格";
+}<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+    <channel>
+        <title>@blogTitle</title>
+        <link>@domain</link>
+        <description>@blogDescription</description>
+        <language>zh-TW</language>
+        <lastBuildDate>@DateTime.UtcNow.ToString("R")</lastBuildDate>
+        <atom:link href="@domain/Rss" rel="self" type="application/rss+xml" />
+        @foreach (var post in Model.Posts)
+        {
+        @:<item>
+        @:    <title>@post.Title</title>
+        @:    <link>@domain/Posts/Details/@post.Id</link>
+        @:    <guid isPermaLink="true">@domain/Posts/Details/@post.Id</guid>
+        @:    <description>@SeoHelper.CleanForSeo(SeoHelper.GenerateMetaDescription(post.MetaDescription, post.Summary, post.Content))</description>
+        @:    <pubDate>@(post.PublishedAt?.ToString("R") ?? post.CreatedAt.ToString("R"))</pubDate>
+            @foreach (var tag in post.Tags)
+            {
+        @:    <category>@tag.Name</category>
+            }
+        @:</item>
+        }
+    </channel>
+</rss>

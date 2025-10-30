@@ -1,0 +1,111 @@
+@page
+@model dotnet_blog_bmad.Pages.Admin.Comments.IndexModel
+@{
+    ViewData["Title"] = "評論管理";
+}
+
+<div class="max-w-7xl mx-auto px-4 py-8">
+    <div class="mb-8">
+        <h1 class="text-3xl font-bold text-gray-900">評論管理</h1>
+        <p class="mt-2 text-gray-600">管理所有文章評論</p>
+    </div>
+
+    @if (Model.Comments.Any())
+    {
+        <div class="bg-white rounded-lg shadow overflow-hidden">
+            <table class="min-w-full divide-y divide-gray-200">
+                <thead class="bg-gray-50">
+                    <tr>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            評論者
+                        </th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            文章
+                        </th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            內容
+                        </th>
+                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            時間
+                        </th>
+                        <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            操作
+                        </th>
+                    </tr>
+                </thead>
+                <tbody class="bg-white divide-y divide-gray-200">
+                    @foreach (var comment in Model.Comments)
+                    {
+                        <tr>
+                            <td class="px-6 py-4">
+                                <div class="text-sm font-medium text-gray-900">@comment.AuthorName</div>
+                                <div class="text-sm text-gray-500">@comment.AuthorEmail</div>
+                            </td>
+                            <td class="px-6 py-4">
+                                <a asp-page="/Posts/Details" asp-route-id="@comment.PostId"
+                                   class="text-sm text-blue-600 hover:text-blue-800">
+                                    @(comment.Post?.Title ?? "未知文章")
+                                </a>
+                            </td>
+                            <td class="px-6 py-4">
+                                <div class="text-sm text-gray-900 max-w-md truncate">
+                                    @comment.Content
+                                </div>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                @comment.CreatedAt.ToLocalTime().ToString("yyyy-MM-dd HH:mm")
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                                <a asp-page="./Delete" asp-route-id="@comment.Id"
+                                   class="text-red-600 hover:text-red-900">
+                                    刪除
+                                </a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Pagination -->
+        @if (Model.TotalPages > 1)
+        {
+            <div class="mt-6 flex justify-center">
+                <nav class="flex items-center space-x-2">
+                    @if (Model.CurrentPage > 1)
+                    {
+                        <a asp-page="./Index" asp-route-pageNumber="@(Model.CurrentPage - 1)"
+                           class="px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50">
+                            上一頁
+                        </a>
+                    }
+
+                    <span class="px-4 py-2 text-sm text-gray-700">
+                        第 @Model.CurrentPage / @Model.TotalPages 頁
+                    </span>
+
+                    @if (Model.CurrentPage < Model.TotalPages)
+                    {
+                        <a asp-page="./Index" asp-route-pageNumber="@(Model.CurrentPage + 1)"
+                           class="px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50">
+                            下一頁
+                        </a>
+                    }
+                </nav>
+            </div>
+        }
+    }
+    else
+    {
+        <div class="text-center py-12 bg-white rounded-lg shadow">
+            <p class="text-gray-500">目前沒有任何評論</p>
+        </div>
+    }
+
+    <div class="mt-6">
+        <a asp-page="/Admin/Posts/Index"
+           class="text-blue-600 hover:text-blue-800">
+            ← 返回文章管理
+        </a>
+    </div>
+</div>

@@ -56,12 +56,17 @@ public class Post
     public string? MetaDescription { get; set; }
 
     /// <summary>
-    /// 標籤 (以逗號分隔的字串)
-    /// </summary>
-    public string? Tags { get; set; }
-
-    /// <summary>
     /// 瀏覽次數
     /// </summary>
     public int ViewCount { get; set; }
+
+    /// <summary>
+    /// 關聯的標籤 (多對多關係)
+    /// </summary>
+    public ICollection<Tag> Tags { get; set; } = new List<Tag>();
+
+    /// <summary>
+    /// 關聯的評論 (一對多關係)
+    /// </summary>
+    public ICollection<Comment> Comments { get; set; } = new List<Comment>();
 }

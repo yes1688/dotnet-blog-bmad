@@ -1,5 +1,6 @@
 ﻿@page
 @model dotnet_blog_bmad.Pages.IndexModel
+@using dotnet_blog_bmad.Helpers
 @{
     ViewData["Title"] = "首頁";
 }
@@ -18,6 +19,70 @@
 
 <!-- 文章列表 -->
 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <!-- Search Bar -->
+    <div class="mb-8">
+        <form method="get" class="max-w-2xl">
+            <div class="flex gap-3">
+                <div class="relative flex-1">
+                    <input type="text"
+                           name="search"
+                           value="@Model.SearchQuery"
+                           placeholder="搜尋文章標題、內容..."
+                           class="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500" />
+                    <svg class="absolute left-3 top-3.5 w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                    </svg>
+                </div>
+                <button type="submit"
+                        class="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium">
+                    搜尋
+                </button>
+                @if (!string.IsNullOrEmpty(Model.SearchQuery))
+                {
+                    <a asp-page="/Index"
+                       class="px-6 py-3 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors font-medium inline-flex items-center">
+                        清除
+                    </a>
+                }
+            </div>
+        </form>
+    </div>
+
+    <!-- Search Result Indicator -->
+    @if (!string.IsNullOrEmpty(Model.SearchQuery))
+    {
+        <div class="mb-6 flex items-center justify-between bg-green-50 border border-green-200 rounded-lg p-4">
+            <div class="flex items-center">
+                <svg class="w-5 h-5 text-green-600 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                </svg>
+                <span class="text-sm font-medium text-green-900">
+                    搜尋「<span class="font-bold">@Model.SearchQuery</span>」找到 @Model.SearchResultCount 篇文章
+                </span>
+            </div>
+            <a asp-page="/Index" class="text-sm text-green-600 hover:text-green-800 font-medium">
+                清除搜尋
+            </a>
+        </div>
+    }
+
+    @if (!string.IsNullOrEmpty(Model.SelectedTag))
+    {
+        <div class="mb-6 flex items-center justify-between bg-blue-50 border border-blue-200 rounded-lg p-4">
+            <div class="flex items-center">
+                <svg class="w-5 h-5 text-blue-600 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"></path>
+                </svg>
+                <span class="text-sm font-medium text-blue-900">
+                    篩選標籤: <span class="font-bold">@Model.SelectedTag</span>
+                </span>
+            </div>
+            <a asp-page="/Index" class="text-sm text-blue-600 hover:text-blue-800 font-medium">
+                清除篩選
+            </a>
+        </div>
+    }
+
     @if (Model.Posts.Count == 0)
     {
         <!-- 空狀態 -->
@@ -37,17 +102,52 @@
             {
                 <article class="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-xl transition-shadow duration-300">
                     <div class="p-6">
-                        <h2 class="text-xl font-bold text-gray-900 mb-2 line-clamp-2">
-                            <a asp-page="/Posts/Details" asp-route-id="@post.Id" class="hover:text-blue-600 transition-colors">
-                                @post.Title
-                            </a>
-                        </h2>
+                        <a asp-page="/Posts/Details" asp-route-id="@post.Id">
+                            <h2 class="text-2xl font-bold text-gray-900 mb-3 hover:text-blue-600 transition-colors">
+                                @if (!string.IsNullOrEmpty(Model.SearchQuery))
+                                {
+                                    @Html.Raw(SearchHelper.HighlightSearchTerm(post.Title, Model.SearchQuery))
+                                }
+                                else
+                                {
+                                    @post.Title
+                                }
+                            </h2>
+                        </a>
 
-                        @if (!string.IsNullOrEmpty(post.Summary))
+                        <p class="text-gray-600 mb-4 line-clamp-3">
+                            @if (!string.IsNullOrEmpty(Model.SearchQuery))
+                            {
+                                var excerpt = !string.IsNullOrWhiteSpace(post.Summary)
+                                    ? post.Summary
+                                    : SearchHelper.ExtractTextFromMarkdown(post.Content, 200);
+                                @Html.Raw(SearchHelper.HighlightSearchTerm(excerpt, Model.SearchQuery, 200))
+                            }
+                            else
+                            {
+                                @(!string.IsNullOrWhiteSpace(post.Summary)
+                                    ? post.Summary
+                                    : (post.Content.Length > 200 ? post.Content.Substring(0, 200) + "..." : post.Content))
+                            }
+                        </p>
+
+                        @if (post.Tags.Any())
                         {
-                            <p class="text-gray-600 mb-4 line-clamp-3">
-                                @post.Summary
-                            </p>
+                            <div class="flex flex-wrap gap-2 mb-4">
+                                @foreach (var tag in post.Tags.Take(5))
+                                {
+                                    <a asp-page="/Index" asp-route-tag="@tag.Slug"
+                                       class="px-2 py-1 text-xs font-medium rounded-full bg-@(tag.Color)-100 text-@(tag.Color)-800 hover:bg-@(tag.Color)-200 transition-colors">
+                                        @tag.Name
+                                    </a>
+                                }
+                                @if (post.Tags.Count > 5)
+                                {
+                                    <span class="px-2 py-1 text-xs font-medium text-gray-500">
+                                        +@(post.Tags.Count - 5)
+                                    </span>
+                                }
+                            </div>
                         }
 
                         <div class="flex items-center justify-between text-sm text-gray-500 mt-4 pt-4 border-t">

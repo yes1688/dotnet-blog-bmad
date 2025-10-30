@@ -3,12 +3,34 @@ using dotnet_blog_bmad.Services;
 using dotnet_blog_bmad.Services.Interfaces;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.Google;
+using Microsoft.AspNetCore.ResponseCompression;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddRazorPages();
+
+// Add Response Caching
+builder.Services.AddResponseCaching();
+
+// Add Response Compression
+builder.Services.AddResponseCompression(options =>
+{
+    options.EnableForHttps = true;
+    options.Providers.Add<BrotliCompressionProvider>();
+    options.Providers.Add<GzipCompressionProvider>();
+});
+
+builder.Services.Configure<BrotliCompressionProviderOptions>(options =>
+{
+    options.Level = System.IO.Compression.CompressionLevel.Fastest;
+});
+
+builder.Services.Configure<GzipCompressionProviderOptions>(options =>
+{
+    options.Level = System.IO.Compression.CompressionLevel.SmallestSize;
+});
 
 // 配置驗證
 builder.Services.AddAuthentication(options =>
@@ -91,6 +113,12 @@ app.UseRouting();
 app.UseSession();
 app.UseAuthentication();
 app.UseAuthorization();
+
+// Use Response Compression (must be before ResponseCaching)
+app.UseResponseCompression();
+
+// Use Response Caching
+app.UseResponseCaching();
 
 app.MapRazorPages();
 

@@ -1,0 +1,54 @@
+@page
+@model dotnet_blog_bmad.Pages.Admin.Comments.DeleteModel
+@{
+    ViewData["Title"] = "刪除評論";
+}
+
+<div class="max-w-3xl mx-auto px-4 py-8">
+    <h1 class="text-3xl font-bold text-gray-900 mb-8">確認刪除評論</h1>
+
+    @if (Model.Comment != null)
+    {
+        <div class="bg-white rounded-lg shadow p-6 mb-6">
+            <div class="mb-4">
+                <label class="block text-sm font-medium text-gray-700 mb-2">評論者</label>
+                <p class="text-gray-900">@Model.Comment.AuthorName</p>
+                <p class="text-sm text-gray-500">@Model.Comment.AuthorEmail</p>
+            </div>
+
+            <div class="mb-4">
+                <label class="block text-sm font-medium text-gray-700 mb-2">所屬文章</label>
+                <p class="text-gray-900">@(Model.Comment.Post?.Title ?? "未知文章")</p>
+            </div>
+
+            <div class="mb-4">
+                <label class="block text-sm font-medium text-gray-700 mb-2">評論內容</label>
+                <div class="bg-gray-50 rounded p-4">
+                    <p class="text-gray-900 whitespace-pre-line">@Model.Comment.Content</p>
+                </div>
+            </div>
+
+            <div class="mb-4">
+                <label class="block text-sm font-medium text-gray-700 mb-2">評論時間</label>
+                <p class="text-gray-900">@Model.Comment.CreatedAt.ToLocalTime().ToString("yyyy-MM-dd HH:mm:ss")</p>
+            </div>
+        </div>
+
+        <div class="bg-red-50 border border-red-200 rounded-lg p-4 mb-6">
+            <p class="text-red-800">
+                <strong>警告：</strong>刪除後將無法恢復此評論。
+            </p>
+        </div>
+
+        <form method="post" class="flex space-x-4">
+            <button type="submit"
+                    class="px-6 py-3 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors font-medium">
+                確認刪除
+            </button>
+            <a asp-page="./Index"
+               class="px-6 py-3 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300 transition-colors font-medium inline-block">
+                取消
+            </a>
+        </form>
+    }
+</div>

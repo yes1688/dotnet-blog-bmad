@@ -54,6 +54,21 @@
                 <p class="mt-2 text-xs text-gray-500">支援 Markdown 格式，包含標題、列表、程式碼區塊等</p>
             </div>
 
+            <!-- 標籤 -->
+            <div class="mb-6">
+                <label asp-for="TagInput" class="block text-sm font-medium text-gray-700 mb-2">
+                    標籤
+                </label>
+                <input asp-for="TagInput"
+                       type="text"
+                       class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                       placeholder="輸入標籤，以逗號分隔 (例如: C#, ASP.NET, 程式設計)" />
+                <p class="mt-1 text-sm text-gray-500">
+                    輸入多個標籤時請用逗號分隔
+                </p>
+                <span asp-validation-for="TagInput" class="text-red-600 text-sm"></span>
+            </div>
+
             <div class="mb-6">
                 <div class="flex items-center">
                     <input type="checkbox"
