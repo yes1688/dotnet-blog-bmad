@@ -1,5 +1,5 @@
 ﻿@page
-@model IndexModel
+@model dotnet_blog_bmad.Pages.IndexModel
 @{
     ViewData["Title"] = "首頁";
 }
@@ -16,67 +16,99 @@
     </div>
 </section>
 
-<!-- Latest Posts Section -->
-<section class="py-16 px-4 bg-gray-50">
-    <div class="container mx-auto">
-        <h2 class="text-3xl md:text-4xl font-bold text-center mb-12 text-gray-800">
-            最新文章
-        </h2>
+<!-- 文章列表 -->
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    @if (Model.Posts.Count == 0)
+    {
+        <!-- 空狀態 -->
+        <div class="text-center py-12">
+            <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+            </svg>
+            <h3 class="mt-2 text-lg font-medium text-gray-900">目前沒有文章</h3>
+            <p class="mt-1 text-sm text-gray-500">請稍後再回來查看</p>
+        </div>
+    }
+    else
+    {
+        <!-- 文章卡片網格 -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            @foreach (var post in Model.Posts)
+            {
+                <article class="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-xl transition-shadow duration-300">
+                    <div class="p-6">
+                        <h2 class="text-xl font-bold text-gray-900 mb-2 line-clamp-2">
+                            <a asp-page="/Posts/Details" asp-route-id="@post.Id" class="hover:text-blue-600 transition-colors">
+                                @post.Title
+                            </a>
+                        </h2>
 
-        <!-- Empty State / Skeleton Cards -->
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
-            <!-- Skeleton Card 1 -->
-            <div class="bg-white rounded-lg shadow-md overflow-hidden animate-pulse">
-                <div class="h-48 bg-gray-300"></div>
-                <div class="p-6">
-                    <div class="h-4 bg-gray-300 rounded w-3/4 mb-4"></div>
-                    <div class="h-3 bg-gray-300 rounded w-full mb-2"></div>
-                    <div class="h-3 bg-gray-300 rounded w-5/6"></div>
-                </div>
-            </div>
+                        @if (!string.IsNullOrEmpty(post.Summary))
+                        {
+                            <p class="text-gray-600 mb-4 line-clamp-3">
+                                @post.Summary
+                            </p>
+                        }
 
-            <!-- Skeleton Card 2 -->
-            <div class="bg-white rounded-lg shadow-md overflow-hidden animate-pulse">
-                <div class="h-48 bg-gray-300"></div>
-                <div class="p-6">
-                    <div class="h-4 bg-gray-300 rounded w-3/4 mb-4"></div>
-                    <div class="h-3 bg-gray-300 rounded w-full mb-2"></div>
-                    <div class="h-3 bg-gray-300 rounded w-5/6"></div>
-                </div>
-            </div>
-
-            <!-- Skeleton Card 3 -->
-            <div class="bg-white rounded-lg shadow-md overflow-hidden animate-pulse">
-                <div class="h-48 bg-gray-300"></div>
-                <div class="p-6">
-                    <div class="h-4 bg-gray-300 rounded w-3/4 mb-4"></div>
-                    <div class="h-3 bg-gray-300 rounded w-full mb-2"></div>
-                    <div class="h-3 bg-gray-300 rounded w-5/6"></div>
-                </div>
-            </div>
+                        <div class="flex items-center justify-between text-sm text-gray-500 mt-4 pt-4 border-t">
+                            <div class="flex items-center">
+                                <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                                </svg>
+                                @post.PublishedAt?.ToLocalTime().ToString("yyyy/MM/dd")
+                            </div>
+                            <div class="flex items-center">
+                                <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+                                </svg>
+                                @post.ViewCount.ToString("N0")
+                            </div>
+                        </div>
+                    </div>
+                </article>
+            }
         </div>
 
-        <!-- Empty State Message -->
-        <div class="text-center mt-8">
-            <p class="text-gray-600 text-lg">
-                目前尚無文章，敬請期待...
-            </p>
-        </div>
-    </div>
-</section>
+        <!-- 分頁導航 -->
+        @if (Model.TotalPages > 1)
+        {
+            <div class="mt-12 flex justify-center">
+                <nav class="flex items-center space-x-2">
+                    @if (Model.CurrentPage > 1)
+                    {
+                        <a asp-page="/Index" asp-route-pageNumber="@(Model.CurrentPage - 1)"
+                           class="px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 bg-white hover:bg-gray-50">
+                            上一頁
+                        </a>
+                    }
 
-<!-- Call to Action Section -->
-<section class="py-16 px-4 bg-white">
-    <div class="container mx-auto text-center">
-        <h3 class="text-2xl md:text-3xl font-bold mb-6 text-gray-800">
-            想看更多內容嗎？
-        </h3>
-        <a href="/Posts"
-           class="inline-block bg-blue-600 hover:bg-blue-700 text-white font-semibold px-8 py-3 rounded-lg transition duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1">
-            查看所有文章
-        </a>
-        <p class="text-gray-500 text-sm mt-4">
-            即將推出更多精彩內容
-        </p>
-    </div>
-</section>
+                    @for (int i = 1; i <= Model.TotalPages; i++)
+                    {
+                        @if (i == Model.CurrentPage)
+                        {
+                            <span class="px-4 py-2 border border-blue-500 rounded-md text-sm font-medium text-white bg-blue-500">
+                                @i
+                            </span>
+                        }
+                        else
+                        {
+                            <a asp-page="/Index" asp-route-pageNumber="@i"
+                               class="px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 bg-white hover:bg-gray-50">
+                                @i
+                            </a>
+                        }
+                    }
+
+                    @if (Model.CurrentPage < Model.TotalPages)
+                    {
+                        <a asp-page="/Index" asp-route-pageNumber="@(Model.CurrentPage + 1)"
+                           class="px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 bg-white hover:bg-gray-50">
+                            下一頁
+                        </a>
+                    }
+                </nav>
+            </div>
+        }
+    }
+</div>
