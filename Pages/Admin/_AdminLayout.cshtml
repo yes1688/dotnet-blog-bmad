@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - 管理後台</title>
+
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- 自訂樣式 -->
+    <style>
+        /* 側邊欄過渡動畫 */
+        .sidebar-transition {
+            transition: transform 0.3s ease-in-out;
+        }
+    </style>
+</head>
+<body class="bg-gray-100">
+    <div class="flex h-screen overflow-hidden">
+
+        <!-- 側邊欄 (Sidebar) -->
+        <aside id="sidebar" class="sidebar-transition fixed inset-y-0 left-0 z-50 w-64 bg-gray-900 text-white transform -translate-x-full lg:translate-x-0 lg:static lg:inset-0">
+            <div class="flex flex-col h-full">
+
+                <!-- Logo 區域 -->
+                <div class="flex items-center justify-between h-16 px-6 bg-gray-800">
+                    <h1 class="text-xl font-bold">管理後台</h1>
+                    <!-- 手機版關閉按鈕 -->
+                    <button id="closeSidebar" class="lg:hidden text-gray-400 hover:text-white focus:outline-none">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                        </svg>
+                    </button>
+                </div>
+
+                <!-- 導覽選單 -->
+                <nav class="flex-1 px-4 py-6 space-y-2 overflow-y-auto">
+                    <!-- Dashboard -->
+                    <a href="/Admin/Index" class="flex items-center px-4 py-3 text-gray-300 rounded-lg hover:bg-gray-800 hover:text-white transition-colors">
+                        <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>
+                        </svg>
+                        <span>Dashboard</span>
+                    </a>
+
+                    <!-- 文章管理 -->
+                    <a href="/Admin/Posts/Index" class="flex items-center px-4 py-3 text-gray-300 rounded-lg hover:bg-gray-800 hover:text-white transition-colors">
+                        <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                        </svg>
+                        <span>文章管理</span>
+                    </a>
+
+                    <!-- 建立新文章 -->
+                    <a href="/Admin/Posts/Create" class="flex items-center px-4 py-3 text-gray-300 rounded-lg hover:bg-gray-800 hover:text-white transition-colors">
+                        <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+                        </svg>
+                        <span>建立新文章</span>
+                    </a>
+
+                    <!-- 分隔線 -->
+                    <div class="my-4 border-t border-gray-700"></div>
+
+                    <!-- 返回網站 -->
+                    <a href="/" class="flex items-center px-4 py-3 text-gray-300 rounded-lg hover:bg-gray-800 hover:text-white transition-colors">
+                        <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+                        </svg>
+                        <span>返回網站</span>
+                    </a>
+
+                    <!-- 登出 -->
+                    <a href="/Admin/Logout" class="flex items-center px-4 py-3 text-gray-300 rounded-lg hover:bg-gray-800 hover:text-white transition-colors">
+                        <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"></path>
+                        </svg>
+                        <span>登出</span>
+                    </a>
+                </nav>
+            </div>
+        </aside>
+
+        <!-- 手機版遮罩層 -->
+        <div id="sidebarOverlay" class="hidden fixed inset-0 z-40 bg-black bg-opacity-50 lg:hidden"></div>
+
+        <!-- 主要內容區域 -->
+        <div class="flex-1 flex flex-col overflow-hidden">
+
+            <!-- 頂部導覽列 -->
+            <header class="bg-white shadow-sm z-10">
+                <div class="flex items-center justify-between h-16 px-6">
+                    <!-- 漢堡選單按鈕 (手機版) -->
+                    <button id="toggleSidebar" class="lg:hidden text-gray-600 hover:text-gray-900 focus:outline-none">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                        </svg>
+                    </button>
+
+                    <!-- 頁面標題 (手機版隱藏) -->
+                    <div class="hidden md:block">
+                        <h2 class="text-xl font-semibold text-gray-800">@ViewData["Title"]</h2>
+                    </div>
+
+                    <!-- 使用者資訊 -->
+                    <div class="flex items-center space-x-4">
+                        <span class="text-sm text-gray-600">
+                            歡迎，<span class="font-medium text-gray-900">@User.Identity?.Name</span>
+                        </span>
+                    </div>
+                </div>
+            </header>
+
+            <!-- 主內容區域 -->
+            <main class="flex-1 overflow-y-auto bg-gray-50 p-6">
+                <div class="max-w-7xl mx-auto">
+                    <!-- 麵包屑或通知區域可以放這裡 -->
+                    @if (TempData["SuccessMessage"] != null)
+                    {
+                        <div class="mb-4 p-4 bg-green-100 border border-green-400 text-green-700 rounded-lg">
+                            @TempData["SuccessMessage"]
+                        </div>
+                    }
+                    @if (TempData["ErrorMessage"] != null)
+                    {
+                        <div class="mb-4 p-4 bg-red-100 border border-red-400 text-red-700 rounded-lg">
+                            @TempData["ErrorMessage"]
+                        </div>
+                    }
+
+                    <!-- 頁面內容 -->
+                    <div class="bg-white rounded-lg shadow-sm p-6">
+                        @RenderBody()
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <!-- JavaScript 控制側邊欄 -->
+    <script>
+        // 側邊欄切換功能
+        const sidebar = document.getElementById('sidebar');
+        const sidebarOverlay = document.getElementById('sidebarOverlay');
+        const toggleSidebar = document.getElementById('toggleSidebar');
+        const closeSidebar = document.getElementById('closeSidebar');
+
+        // 打開側邊欄
+        function openSidebar() {
+            sidebar.classList.remove('-translate-x-full');
+            sidebarOverlay.classList.remove('hidden');
+            document.body.style.overflow = 'hidden'; // 防止背景滾動
+        }
+
+        // 關閉側邊欄
+        function closeSidebarFunc() {
+            sidebar.classList.add('-translate-x-full');
+            sidebarOverlay.classList.add('hidden');
+            document.body.style.overflow = ''; // 恢復滾動
+        }
+
+        // 事件監聽
+        toggleSidebar.addEventListener('click', openSidebar);
+        closeSidebar.addEventListener('click', closeSidebarFunc);
+        sidebarOverlay.addEventListener('click', closeSidebarFunc);
+
+        // ESC 鍵關閉側邊欄
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape') {
+                closeSidebarFunc();
+            }
+        });
+    </script>
+
+    <!-- 可選的額外腳本區塊 -->
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>
