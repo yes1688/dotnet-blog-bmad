@@ -62,10 +62,14 @@ dotnet-blog-bmad/
 
 ### 前置需求
 
-- Docker 或 Podman (用於容器化開發)
+- Podman 與 Podman Compose (或 Docker 與 Docker Compose)
 - Git
 
 ### 本地開發環境設定
+
+#### 方法一: 使用 Podman Compose (推薦)
+
+完整的容器化開發環境，包含應用程式與 PostgreSQL 資料庫。
 
 1. **Clone 專案**
 
@@ -74,11 +78,51 @@ git clone <repository-url>
 cd dotnet-blog-bmad
 ```
 
-2. **使用 Docker 執行專案** (開發模式)
+2. **設定環境變數**
+
+```bash
+# 複製環境變數範本
+cp .env.example .env
+
+# 編輯 .env 檔案，設定必要的環境變數
+# 特別是 Google OAuth 憑證與管理員白名單
+nano .env
+```
+
+3. **啟動完整環境**
+
+```bash
+# 建置並啟動應用程式與資料庫
+podman compose up -d
+
+# 查看容器狀態
+podman compose ps
+
+# 查看應用程式日誌
+podman compose logs -f app
+```
+
+4. **瀏覽應用程式**
+
+開啟瀏覽器訪問: `http://localhost:5000`
+
+5. **停止環境**
+
+```bash
+# 停止並移除容器
+podman compose down
+
+# 停止並移除容器與 volumes (清除資料庫)
+podman compose down -v
+```
+
+#### 方法二: 使用 Podman 直接執行 (僅測試)
+
+適合快速測試，不包含資料庫。
 
 ```bash
 # 使用 .NET SDK 容器執行專案
-docker run --rm -it \
+podman run --rm -it \
   -v "$(pwd):/app" \
   -w /app \
   -p 5000:5000 \
@@ -87,25 +131,12 @@ docker run --rm -it \
   dotnet run
 ```
 
-3. **瀏覽應用程式**
-
-開啟瀏覽器訪問: `http://localhost:5000`
-
-### 完整環境設定 (包含資料庫)
-
-待 Story 1.2 完成後，將提供 `docker-compose.yml` 配置檔案，可一鍵啟動應用程式與 PostgreSQL 資料庫。
-
-```bash
-# 未來使用方式
-docker-compose up -d
-```
-
 ## 開發狀態
 
 目前專案處於初始開發階段，正在實作以下功能:
 
 - [x] Story 1.1: 專案初始化與資料夾結構
-- [ ] Story 1.2: Container 開發環境設定
+- [x] Story 1.2: Container 開發環境設定
 - [ ] Story 1.3: Entity Framework Core 設定
 - [ ] Story 1.4: Google OAuth 身份驗證
 - [ ] Story 1.5: 基礎頁面與導覽
