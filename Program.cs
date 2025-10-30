@@ -1,10 +1,41 @@
-using Microsoft.EntityFrameworkCore;
 using dotnet_blog_bmad.Data;
+using dotnet_blog_bmad.Services;
+using dotnet_blog_bmad.Services.Interfaces;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication.Google;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddRazorPages();
+
+// 配置驗證
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+    options.DefaultChallengeScheme = "Google";
+})
+.AddCookie(options =>
+{
+    options.LoginPath = "/Admin/Login";
+    options.LogoutPath = "/Admin/Logout";
+    options.ExpireTimeSpan = TimeSpan.FromDays(7);
+})
+.AddGoogle(options =>
+{
+    options.ClientId = builder.Configuration["Authentication:Google:ClientId"] ?? "";
+    options.ClientSecret = builder.Configuration["Authentication:Google:ClientSecret"] ?? "";
+    options.SaveTokens = true;
+});
+
+// 配置 Session
+builder.Services.AddSession(options =>
+{
+    options.IdleTimeout = TimeSpan.FromMinutes(30);
+    options.Cookie.HttpOnly = true;
+    options.Cookie.IsEssential = true;
+});
 
 // 註冊資料庫上下文
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
@@ -12,6 +43,9 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
     var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
     options.UseNpgsql(connectionString);
 });
+
+// 註冊服務
+builder.Services.AddScoped<IAdminService, AdminService>();
 
 var app = builder.Build();
 
@@ -54,6 +88,8 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
+app.UseSession();
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapRazorPages();
