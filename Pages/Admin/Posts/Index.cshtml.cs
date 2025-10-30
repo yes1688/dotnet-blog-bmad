@@ -33,9 +33,10 @@ public class IndexModel : PageModel
     /// </summary>
     public async Task OnGetAsync()
     {
-        // 查詢所有文章，按更新時間降序排列
+        // 查詢所有文章，按發布時間降序排列（未發布的排在最後），然後按建立時間降序排列
         Posts = await _context.Posts
-            .OrderByDescending(p => p.UpdatedAt)
+            .OrderByDescending(p => p.PublishedAt ?? DateTime.MinValue)
+            .ThenByDescending(p => p.CreatedAt)
             .ToListAsync();
     }
 }

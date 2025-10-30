@@ -1,0 +1,58 @@
+@page "{id:int}"
+@model dotnet_blog_bmad.Pages.Posts.DetailsModel
+@{
+    ViewData["Title"] = Model.Post?.Title ?? "Post Details";
+    Layout = "/Pages/Shared/_Layout.cshtml";
+}
+
+<div class="max-w-4xl mx-auto px-4 py-8">
+    @if (Model.Post != null)
+    {
+        <article>
+            <!-- Post Header -->
+            <header class="mb-8">
+                <h1 class="text-4xl font-bold text-gray-900 mb-4">@Model.Post.Title</h1>
+
+                <!-- Post Metadata -->
+                <div class="flex items-center text-gray-600 text-sm space-x-4">
+                    <span class="flex items-center">
+                        <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                        </svg>
+                        Published: @Model.Post.PublishedAt?.ToString("MMMM dd, yyyy")
+                    </span>
+                    <span class="flex items-center">
+                        <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+                        </svg>
+                        @Model.Post.ViewCount views
+                    </span>
+                </div>
+            </header>
+
+            <!-- Post Summary -->
+            @if (!string.IsNullOrWhiteSpace(Model.Post.Summary))
+            {
+                <div class="bg-gray-50 border-l-4 border-blue-500 p-4 mb-8">
+                    <p class="text-gray-700 italic">@Model.Post.Summary</p>
+                </div>
+            }
+
+            <!-- Post Content -->
+            <div class="prose prose-lg max-w-none">
+                @Html.Raw(Model.RenderedContent)
+            </div>
+        </article>
+
+        <!-- Back Link -->
+        <div class="mt-12 pt-8 border-t border-gray-200">
+            <a href="/" class="inline-flex items-center text-blue-600 hover:text-blue-800 transition-colors">
+                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+                </svg>
+                Back to Home
+            </a>
+        </div>
+    }
+</div>
