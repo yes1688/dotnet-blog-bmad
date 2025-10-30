@@ -83,4 +83,31 @@
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
+
+    <!-- EasyMDE CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/easymde/dist/easymde.min.css">
+
+    <!-- EasyMDE JS -->
+    <script src="https://cdn.jsdelivr.net/npm/easymde/dist/easymde.min.js"></script>
+
+    <!-- Marked.js for Markdown preview -->
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+
+    <!-- Initialize EasyMDE -->
+    <script>
+        var easyMDE = new EasyMDE({
+            element: document.getElementById('Content'),
+            spellChecker: false,
+            autosave: {
+                enabled: true,
+                uniqueId: "create-post-content",
+                delay: 1000,
+            },
+            placeholder: "在此輸入 Markdown 格式的文章內容...",
+            toolbar: ["bold", "italic", "heading", "|", "quote", "unordered-list", "ordered-list", "|", "link", "image", "|", "preview", "side-by-side", "fullscreen", "|", "guide"],
+            previewRender: function(plainText) {
+                return marked.parse(plainText);
+            }
+        });
+    </script>
 }
