@@ -112,15 +112,16 @@ public class ApplicationDbContext : DbContext
 
         foreach (var entry in entries)
         {
-            if (entry.State == EntityState.Added)
+            // Check if entity has CreatedAt property
+            var createdAtProperty = entry.Metadata.FindProperty("CreatedAt");
+            if (entry.State == EntityState.Added && createdAtProperty != null)
             {
-                if (entry.Property("CreatedAt").CurrentValue is DateTime)
-                {
-                    entry.Property("CreatedAt").CurrentValue = now;
-                }
+                entry.Property("CreatedAt").CurrentValue = now;
             }
 
-            if (entry.Property("UpdatedAt").CurrentValue is DateTime)
+            // Check if entity has UpdatedAt property
+            var updatedAtProperty = entry.Metadata.FindProperty("UpdatedAt");
+            if (updatedAtProperty != null)
             {
                 entry.Property("UpdatedAt").CurrentValue = now;
             }

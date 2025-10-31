@@ -30,20 +30,17 @@ services:
       dockerfile: Dockerfile
     container_name: dotnet-blog-app
     restart: unless-stopped
+    network_mode: host
     environment:
       ASPNETCORE_ENVIRONMENT: ${ASPNETCORE_ENVIRONMENT:-Development}
-      ASPNETCORE_URLS: http://+:8080
-      ConnectionStrings__DefaultConnection: "Host=db;Port=5432;Database=${DB_NAME:-blogdb};Username=${DB_USER:-bloguser};Password=${DB_PASSWORD:-changeme123}"
+      ASPNETCORE_URLS: http://+:5000
+      ConnectionStrings__DefaultConnection: "Host=localhost;Port=5432;Database=${DB_NAME:-blogdb};Username=${DB_USER:-bloguser};Password=${DB_PASSWORD:-changeme123}"
       Authentication__Google__ClientId: ${GOOGLE_CLIENT_ID}
       Authentication__Google__ClientSecret: ${GOOGLE_CLIENT_SECRET}
       Security__AdminWhitelist: ${ADMIN_WHITELIST}
-    ports:
-      - "${APP_PORT:-5000}:8080"
     depends_on:
       db:
         condition: service_healthy
-    networks:
-      - blog-network
     volumes:
       # Mount source code for development (comment out for production)
       - .:/app/source:ro
