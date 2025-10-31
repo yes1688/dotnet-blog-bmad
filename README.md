@@ -4,7 +4,17 @@
 
 ## 專案簡介
 
-這是一個功能完整的個人部落格系統，採用 .NET 8.0 Razor Pages 框架開發，使用 PostgreSQL 作為資料庫。專案遵循 BMAD 方法論進行開發。
+這是一個**試驗性專案**，主要目的是驗證和展示 **BMAD-METHOD** 套件在實際開發中的應用效果。本專案開發一個功能完整的個人部落格系統，採用 .NET 8.0 Razor Pages 框架，使用 PostgreSQL 作為資料庫。
+
+### 什麼是 BMAD-METHOD？
+
+**BMAD (Business Model-Aligned Development)** 是一個系統化的軟體開發方法論，透過多個專業代理（Agent）協作，從規劃到開發實現完整的工作流程。本專案完整遵循 BMAD 流程，展示該方法論如何協助開發者有效率地完成軟體專案。
+
+### 專案目標
+
+1. **驗證 BMAD-METHOD**：透過實際專案展示 BMAD 方法論的實用性與效果
+2. **學習與實驗**：作為學習 ASP.NET Core 與現代開發實踐的實驗場域
+3. **可用的部落格系統**：產出一個真正可用的個人部落格平台
 
 ### 核心功能
 
@@ -133,29 +143,79 @@ podman run --rm -it \
 
 ## 開發狀態
 
-目前專案處於初始開發階段，正在實作以下功能:
+專案目前已完成主要核心功能，正處於進階功能開發階段：
 
-- [x] Story 1.1: 專案初始化與資料夾結構
-- [x] Story 1.2: Container 開發環境設定
-- [ ] Story 1.3: Entity Framework Core 設定
-- [ ] Story 1.4: Google OAuth 身份驗證
-- [ ] Story 1.5: 基礎頁面與導覽
+### 已完成功能
+
+- [x] **Story 1.x - 基礎建設**
+  - [x] Story 1.1: 專案初始化與資料夾結構
+  - [x] Story 1.2: Container 開發環境設定
+  - [x] Story 1.3: Entity Framework Core 設定
+  - [x] Story 1.4: Google OAuth 身份驗證
+  - [x] Story 1.5: 基礎頁面與導覽
+
+- [x] **Story 2.x - 核心功能**
+  - [x] Story 2.1: 文章 CRUD 功能
+  - [x] Story 2.2: Markdown 編輯器與預覽
+  - [x] Story 2.3: 文章列表與分頁
+
+- [x] **Story 3.x-4.x - 進階功能**
+  - [x] Story 3.1-4.1: 進階功能與效能優化
+
+### 最近更新
+
+- 修復 Google OAuth 登出流程
+- 修復 Entity Framework 時間戳記處理邏輯
+- 優化 Docker 網路設定（使用 host network mode）
+- 完善表單驗證腳本引用
 
 完整的功能規劃請參閱 [PRD 文件](docs/prd.md)。
 
 ## 文件
 
+### 專案文件
+
 - [專案簡介 (Project Brief)](docs/brief.md)
 - [產品需求文件 (PRD)](docs/prd.md)
 - [架構設計文件 (Architecture)](docs/architecture.md)
 
-## 開發方法論
+### BMAD-METHOD 相關
 
-本專案採用 **BMAD (Business Model-Aligned Development)** 方法論:
+- [BMAD-METHOD 工作流程圖](bmad-method-workflow.md) - 完整的開發流程說明與 Mermaid 流程圖
 
-1. **Planning Phase**: 需求分析 → PRD → 架構設計
-2. **Development Phase**: Story-by-Story 實作與測試
-3. **Quality Assurance**: 持續驗證與迭代
+## BMAD-METHOD 開發流程
+
+本專案完整採用 **BMAD-METHOD** 套件進行開發，展示其工作流程：
+
+### 📋 規劃階段（Planning Phase）
+
+規劃階段由三個專業代理協作，產出完整的專案規劃文件：
+
+- **👤 Analyst（分析師）**：收集需求、定義問題，產出專案簡介
+- **📱 PM（產品經理）**：整理成 PRD（產品需求文件），定義功能規格
+- **🏗️ Architect（架構師）**：設計技術架構、資料庫結構與系統設計
+
+完成後需要人工審查，確認無誤後產出完整的規劃文件。
+
+### ⚙️ 開發階段（Development Phase）
+
+規劃完成後進入實作流程：
+
+- **📝 Scrum Master（敏捷大師）**：將規劃文件轉換成詳細的 Story 檔案
+- **💻 Dev（開發者）**：讀取 Story 並進行程式碼實作
+- **🧪 QA（測試）**：驗證程式碼品質與功能正確性
+
+測試通過後繼續下一個 Story，直到所有 Story 完成。
+
+### 流程圖
+
+完整的 BMAD-METHOD 工作流程請參考：[bmad-method-workflow.md](bmad-method-workflow.md)
+
+### 核心特色
+
+- **多代理協作**：規劃階段透過多個代理協作產出前後一致的完整規劃
+- **Story 檔案系統**：開發階段的 Story 檔案讓每個任務都有完整情境
+- **持續驗證**：每個 Story 完成後都經過測試，確保品質
 
 ## 授權
 
